@@ -1,0 +1,37 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: new-payment-route
+          uri: https://httpbin.org
+          predicates:
+            - Path=/payments/{resource_id}/details
+          filters:
+            - RewritePath=/(?<segment>.*), /status/500
+            - name: CircuitBreaker
+              args:
+                name: payment-circuit-breaker
+                fallbackUri: forward:/paymentFallbackPathResolver
+
+        - id: fallback-path-resolver-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/paymentFallbackPathResolver
+          filters:
+            - name: Fallback
+              args:
+                fallbackUri: /fallback-payments/{resource_id}/details
+
+        - id: fallback-payment-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/fallback-payments/{resource_id}/details
+          filters:
+            - RewritePath=/(?<segment>.*), /legacy-billing/${segment}
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.web.reactive: DEBUG
+    logging.level.io.github.resilience4j: DEBUG
+    org.springframework.cloud.gateway: DEBUG
