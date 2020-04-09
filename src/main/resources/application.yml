@@ -7,7 +7,7 @@ spring:
           predicates:
             - Path=/payments/{resource_id}/details
           filters:
-            - RewritePath=/(?<segment>.*), /status/500
+            - RewritePath=/(?<segment>.*), /status/502
             - name: CircuitBreaker
               args:
                 name: payment-circuit-breaker
