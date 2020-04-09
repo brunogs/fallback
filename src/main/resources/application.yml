@@ -28,10 +28,3 @@ spring:
             - Path=/fallback-payments/{resource_id}/details
           filters:
             - RewritePath=/(?<segment>.*), /legacy-billing/${segment}
-
-logging:
-  level:
-    org.springframework.web: DEBUG
-    org.springframework.web.reactive: DEBUG
-    logging.level.io.github.resilience4j: DEBUG
-    org.springframework.cloud.gateway: DEBUG
